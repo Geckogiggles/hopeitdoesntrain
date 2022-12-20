@@ -12,13 +12,13 @@
   <title>Hope It Doesn't Rain- Your Weather News Your Way</title>
 
 </head>
-
+<!-- background image -->
 <body class="row hero-image" style="margin:5rem">
-  <!-- Spans are to dynamically change the element inside that heading. -->
   <div class="card m-3" style="padding-bottom:2rem; margin: 2rem;">
-    <h1 class="display-4 text-center">Hope It Doesn't Rain <span></span>!</h1>
+    <h1 class="display-4 text-center">Hope It Doesn't Rain!</h1>
     <form id="formCitySearch" class="row">
     <div class="mb-3 text-center col-9">
+      <!-- searchbar -->
       <h2 class="fs-4"><label for="insertCityName" class="form-label">Search for City:</label></h2>
       <input type="text" class="form-control" id="citySearchInput" aria-describedby="citySearchParam">
       <div id="cityParam" class="form-text">Search for the weather of a specific city.</div>
@@ -30,11 +30,8 @@
     <div class="row">
     <aside class=" m-1 col">
       <!-- History -->
-      <div class="card" style="width: 18rem; margin-left: 0.8rem;">
+      <div class="card" id="historyCard" style="width: 18rem; margin-left: 0.8rem;">
         <ul class="list-group list-group-flush" id="searchHistory">
-          <li class="list-group-item">An item</li>
-          <li class="list-group-item">A second item</li>
-          <li class="list-group-item">A third item</li>
         </ul>
       </div>
     </aside>
@@ -54,6 +51,4 @@
   crossorigin="anonymous"></script>
   <script src="./assets/develop/script.js"></script>
 </body>
-<footer style="padding:2rem"></footer>
-
 </html>
