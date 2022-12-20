@@ -3,40 +3,31 @@ var searchFormEl = document.querySelector("#formCitySearch");
 var textInputCity = document.querySelector("#citySearchInput");
 var fiveDayForecastEl = document.querySelector("#fiveDayForecast");
 var currentForecastEl = document.querySelector("#currentForecastCard");
+var searchHistoryListEl = document.querySelector("#searchHistory");
 
 // var geocodeURL= `http://api.openweathermap.org/geo/1.0/direct?q=${city},${state},${country}&limit=${limit}&appid=${apiKey}`;
 
 
 
 var apiKey = '70da03e4a9cd76080662380bedafe8c5';
-function getWeatherData() { }
 function handleSearchFormSubmit(event) {
     event.preventDefault();
     // get value from search input
     var searchInput = textInputCity.value;
-    console.log(searchInput);
     // conditional statement to catch user error
     if (searchInput == "") {
         alert("Text has not been filled. Please fill in text area with a city name to search.");
-    } else{
+    } else {
+        //everytime you click history it won't keep adding to the history
+        saveSearchtoLocalStorage(searchInput);
+
         searchApi(searchInput);
     }
 }
-// search form event listener for submit
-searchFormEl.addEventListener("submit", handleSearchFormSubmit);
-function getParams() {
-    // Get the search params out of the URL (i.e. `?q=london&format=photo`) and convert it to an array (i.e. ['?q=london', 'format=photo'])
-    var query = document.querySelector("#search-input").value;
-    var format = document.querySelector("#format-input").value;
-    // Get the query value
 
-    //pass the query and format values to the searchApi function
-    searchApi(query, format);
-}
-function renderCurrentWeather(resultObj){
-    console.log(resultObj);
+function renderCurrentWeather(resultObj) {
     var currentWeatherString = "";
-        currentWeatherString += `<div class="card mb-3" style="max-width: 540px;">
+    currentWeatherString += `<div class="card mb-3" style="max-width: 540px;">
     <div class="row g-0">
       <div class="col-md-4">
       <img src="http://openweathermap.org/img/wn/${resultObj.weather[0].icon}@2x.png"class="img-fluid rounded-start" alt="${resultObj.weather.icon}">
@@ -54,13 +45,28 @@ function renderCurrentWeather(resultObj){
       </div>
     </div>
   </div>`;
-  currentForecastEl.innerHTML = currentWeatherString;
+    currentForecastEl.innerHTML = currentWeatherString;
+}
+function getCurrentSearchHistory() {
+    var currentSearchHistory = localStorage.getItem('searchHistory')
+    if (currentSearchHistory) {
+        return JSON.parse(currentSearchHistory)
+    }
+    return [];
+}
+function renderHistory() {
+    var currentSearchHistory = getCurrentSearchHistory();
+    var historyString = "";
+    for (let i = 0; i < currentSearchHistory.length; i++) {
+        historyString +=
+            `<li class="list-group-item">${currentSearchHistory[i]}</li>`;
+    }
+    searchHistoryListEl.innerHTML = historyString;
 }
 function renderFiveDayResults(resultObj) {
-    console.log(resultObj);
     var fiveDayForecastString = "";
 
-    for (let i = 0; i < resultObj.list.length; i+=9) {
+    for (let i = 0; i < resultObj.list.length; i += 9) {
 
         fiveDayForecastString += `<div class="card" style="width: 18rem;">
         <img src="http://openweathermap.org/img/wn/${resultObj.list[i].weather[0].icon}@2x.png" class="card-img-top fiveDayImg" alt="${resultObj.list[i].weather[0].description}">
@@ -75,17 +81,21 @@ function renderFiveDayResults(resultObj) {
           </ul>
         </div>
         <div class="card-footer row">
-          <small class="text-muted">Last updated 3 mins ago</small>
         </div>
       </div>`
     }
-    console.log(fiveDayForecastString);
     fiveDayForecastEl.innerHTML = fiveDayForecastString;
-    // TODO: create a link button to 'Read More'
+}
 
-    // TODO: append the elements to the card body `<div>`
-
-    // TODO: append the card body to the full results `<div>`
+function saveSearchtoLocalStorage(search) {
+    var currentSearchHistory = localStorage.getItem("searchHistory");
+    if (currentSearchHistory) {
+        var currentSearchHistoryArray = JSON.parse(currentSearchHistory)
+        currentSearchHistoryArray.push(search);
+        localStorage.setItem("searchHistory", JSON.stringify(currentSearchHistoryArray))
+    } else {
+        localStorage.setItem("searchHistory", JSON.stringify([search]))
+    }
 }
 
 function searchApi(city) {
@@ -97,21 +107,27 @@ function searchApi(city) {
     fetch(forecastURL).then(function (response) {
         return response.json() //conversion of raw data
     }).then(function (data) {
-        console.log(data);
         renderFiveDayResults(data);
-        fetchCurrentWeather(data.city.coord.lat,data.city.coord.lon)
+        fetchCurrentWeather(data.city.coord.lat, data.city.coord.lon);
+        renderHistory();
     })
 }
-function fetchCurrentWeather(lat, lon){    
+function fetchCurrentWeather(lat, lon) {
 
-    var coordinatesURL= `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=imperial`;
+    var coordinatesURL = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=imperial`;
     // fetch response in JSON format
     fetch(coordinatesURL).then(function (response) {
         return response.json() //conversion of raw data
     }).then(function (data) {
-        console.log(data);
         renderCurrentWeather(data);
     })
-
 }
-
+// search form event listener for submit
+searchFormEl.addEventListener("submit", handleSearchFormSubmit);
+searchHistoryListEl.addEventListener("click", function handleListClick(event) {
+    //if the item you click is an li then target that item
+    if (event.target.tagName === "LI") {
+        searchApi(event.target.textContent);
+    }
+});
+renderHistory();
