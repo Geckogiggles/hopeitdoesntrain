@@ -30,14 +30,14 @@ function renderCurrentWeather(resultObj) {
     currentWeatherString += `<div class="card mb-3" style="max-width: 540px;">
     <div class="row g-0">
       <div class="col-md-4">
-      <img src="http://openweathermap.org/img/wn/${resultObj.weather[0].icon}@2x.png"class="img-fluid rounded-start" alt="${resultObj.weather.icon}">
+      <img src="http://openweathermap.org/img/wn/${resultObj.weather[0].icon}@2x.png"class="img-fluid rounded-start" alt="${resultObj.weather[0].description}">
       </div>
       <div class="col-md-8">
         <div class="card-body">
           <h5 class="card-title">Current Weather in ${resultObj.name}</h5>
           <ul class="card-text">
-            <li>Max Temp: ${resultObj.main.temp_max}</li>
-            <li>Min Temp: ${resultObj.main.temp_min}</li>
+            <li>Max Temp: ${resultObj.main.temp_max}°</li>
+            <li>Min Temp: ${resultObj.main.temp_min}°</li>
             <li>Wind Speed: ${resultObj.wind.speed}</li>
             <li>Humidity: ${resultObj.main.humidity} %</li>
           </ul>
