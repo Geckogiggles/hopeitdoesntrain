@@ -8,6 +8,10 @@
     background-blend-mode:lighten;
   }
 
+  .card{
+    viewport-fit:auto;
+  }
+
   .fiveDayImg {
     max-width: 50%;
     margin:0 auto;
